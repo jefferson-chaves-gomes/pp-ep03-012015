@@ -3,21 +3,23 @@
 // Author      : Jefferson Chaves Gomes
 // Version     : 1.0.0
 // Copyright   : Academic Program
-// Description : EP 02 in C++
+// Description : EP 03 in C++
 //============================================================================
 
 // Libraries definitions
 // -----------------------------------------------------
 #include <iostream>     // for std::cin, std::cout, etc.
+#include <limits.h>     // for INT_MAX
 #include <vector>       // for vector
-#include <sys/time.h>   // for gettimeofday
-#include <cmath>        // for std::abs, std::ceil
+#include <cmath>        // for std::pow
 #include <iomanip>      // for std::setprecision
 #include <stdlib.h>     // for std:atoi
+#include <mpi.h>        // for MPI
 
 // Constants definitions
 // -----------------------------------------------------
-#define MAX_ATTEMPTS 100
+#define MAX_ATTEMPTS 10
+#define PROCESS_MASTER 0
 
 // Enums definitions
 // -----------------------------------------------------
@@ -38,22 +40,54 @@ struct Result {
 // Functions declarations
 // -----------------------------------------------------
 void readInputParams(int, char**);
-int readNumberCount();
+int readNumbersCount();
 OutputType readOutputType();
 std::vector<float> readVecNumbers(const int);
 void printUsage();
 OutputType stringToOutputType(std::string);
 void printResult(OutputType, Result);
 void allowAnotherAttempt(const std::string, int&);
+bool isPowerOfTwo(uint number);
 
 // -----------------------------------------------------
 // main Function
 // -----------------------------------------------------
 int main(int argc, char **argv) {
+    int processCount;
+    int processRank;
+    int numberToSend;
+    int currentLevel,
+    int auxLevel;
+    int NextLevel;
+    int processSource;
+    int processSourceTag;
+    int processTarget;
+    int processTargetTag;
+    float levelsCount;
+    static int totalSum = 0;
+    MPI_Status status;
     readInputParams(argc, argv);
     OutputType outputType = readOutputType();
-    int numberCount = readNumberCount();
-    std::vector<float> vecNumbers = readVecNumbers(numberCount);
+    int numbersCount = readNumbersCount();
+    std::vector<float> vecNumbers = readVecNumbers(numbersCount);
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &processCount);
+    MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
+
+    if (isPowerOfTwo(processCount)) {
+
+    }
+
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
     // ~~~~~~~~~~~~~~~
     Result result;
     result.sum = 0.0;
@@ -63,7 +97,7 @@ int main(int argc, char **argv) {
         result.sum += vecNumbers[i];
     }
     // ~~~~~~~~~~~~~~~
-//    Result result = startParallelProcess(vecRelations);
+    // Result result = startParallelProcess(vecRelations);
     printResult(outputType, result);
     return EXIT_SUCCESS;
 }
@@ -71,9 +105,10 @@ int main(int argc, char **argv) {
 // Function implementations
 // -----------------------------------------------------
 void readInputParams(int argc, char **argv) {
+    std::cout << "proc number: " << argv[0] << "\n\n";
     if (argc != 1) {
         printUsage();
-        exit(EXIT_FAILURE);
+        exit (EXIT_FAILURE);
     }
 }
 
@@ -89,13 +124,14 @@ OutputType readOutputType() {
     return stringToOutputType(outputOption);
 }
 
-int readNumberCount() {
+int readNumbersCount() {
     int badAttempts = 0;
-    int numberCount = 0;
+    int numberCount;
     std::cin >> numberCount;
-    while (std::cin.bad() || std::cin.fail() || numberCount < 1 ) {
-        allowAnotherAttempt("Error: The amont of numbers must be a valid integer greater then 0.", badAttempts);
+    while (std::cin.bad() || std::cin.fail() || numberCount < 2) {
+        allowAnotherAttempt("Error: The amont of numbers must be a valid integer greater then 1.", badAttempts);
         std::cin.clear();
+        std::cin.ignore(INT_MAX, '\n');
         std::cin >> numberCount;
     }
     return numberCount;
@@ -107,8 +143,11 @@ std::vector<float> readVecNumbers(const int numberCount) {
     std::vector<float> vecNumbers;
     for (long i = 0; i < numberCount; i++) {
         std::cin >> number;
-        if (std::cin.bad() || std::cin.fail()) {
+        while (std::cin.bad() || std::cin.fail()) {
             allowAnotherAttempt("Error: The number must be a integer or a float [5 | 5.0].", badAttempts);
+            std::cin.clear();
+            std::cin.ignore(INT_MAX, '\n');
+            std::cin >> number;
         }
         vecNumbers.push_back(number);
     }
@@ -117,11 +156,15 @@ std::vector<float> readVecNumbers(const int numberCount) {
 
 void allowAnotherAttempt(const std::string msg, int &badAttempts) {
     std::cout << msg << "\n";
-    std::cout << "Try again\n.";
+    std::cout << "Try again.\n";
     if (++badAttempts >= MAX_ATTEMPTS) {
         printUsage();
-        exit(EXIT_FAILURE);
+        exit (EXIT_FAILURE);
     }
+}
+
+bool isPowerOfTwo(uint number) {
+    return (number & -number) == number;
 }
 
 void printUsage() {
