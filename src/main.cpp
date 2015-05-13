@@ -54,13 +54,11 @@ void allowAnotherAttempt(const std::string, int&);
 int main(int argc, char **argv) {
 
     // Input variables
-    // ----------------------------
     OutputType outputType = NONE;
     int numbersCount = 0;
     std::vector<float> vecNumbers;
 
     // MPI variables
-    // ----------------------------
     int processRank;
     int processCount;
     int currentLevel;
@@ -77,7 +75,6 @@ int main(int argc, char **argv) {
     MPI_Status status;
 
     // MPI initialization
-    // ----------------------------
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &processCount);
     MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
@@ -95,7 +92,6 @@ int main(int argc, char **argv) {
         //
 
         // Reading input data
-        // ----------------------------
         readInputParams(argc, argv);
         outputType = readOutputType();
         numbersCount = readNumbersCount();
@@ -104,27 +100,18 @@ int main(int argc, char **argv) {
         // Step 1 - Element Distribution
         // ----------------------------
         chunksize = std::ceil(vecNumbers.size() / processCount);
-        //
-        // temp begin
-        //
-        std::cout << "Chunksize: " << chunksize << "\n";
-        //
-        // temp end
-        //
     }
 
-    if (processRank == PROCESS_MASTER) {
+    // Step 2 - Reduction Tree Simulation
+    // ----------------------------
+    for (int i = 0; i < processCount; i++) {
 
-    } else {
-
+        MPI_Send(&vecNumbers, chunksize, MPI_DOUBLE, i + 1, 0, MPI_COMM_WORLD);
     }
 
-    // Getting the tree height
+    // Step 3 - Reduction Tree
     // ----------------------------
     levelsCount = log2(processCount);
-
-    // Stating MPI data process
-    // ----------------------------
     totalSum = processRank + 1.0;
     for (currentLevel = 0; currentLevel < levelsCount; currentLevel++) {
         level = (int) (std::pow(2, currentLevel));
