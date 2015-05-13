@@ -42,7 +42,7 @@ struct Result {
 void readInputParams(int, char**);
 int readNumbersCount();
 OutputType readOutputType();
-std::vector<float> readVecNumbers(const int);
+void readNumbersArray(float*, const int);
 void printUsage();
 OutputType stringToOutputType(std::string);
 void printResult(OutputType, Result);
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
     // Input variables
     OutputType outputType = NONE;
     int numbersCount = 0;
-    std::vector<float> vecNumbers;
+    float *numbersArray;
 
     // MPI variables
     int processRank;
@@ -73,6 +73,7 @@ int main(int argc, char **argv) {
     double processedNumber;
     static double totalSum = 0;
     MPI_Status status;
+    float *recNumbersArray;
 
     // MPI initialization
     MPI_Init(&argc, &argv);
@@ -95,19 +96,30 @@ int main(int argc, char **argv) {
         readInputParams(argc, argv);
         outputType = readOutputType();
         numbersCount = readNumbersCount();
-        vecNumbers = readVecNumbers(numbersCount);
+        numbersArray = new float[numbersCount];
+        readNumbersArray(numbersArray, numbersCount);
 
         // Step 1 - Element Distribution
         // ----------------------------
-        chunksize = std::ceil(vecNumbers.size() / processCount);
+        chunksize = numbersCount / (double) processCount;
+
+        // Step 2 - Reduction Tree Simulation
+        // ----------------------------
+        for (int i = 1; i < processCount; i++) {
+            MPI_Send(&chunksize, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_Send(&numbersArray[i * chunksize], chunksize, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
+        }
+    } else {
+        MPI_Recv(&chunksize, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+
+        recNumbersArray = new float[numbersCount];
+
+        MPI_Recv(recNumbersArray, chunksize, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &status);
     }
 
-    // Step 2 - Reduction Tree Simulation
-    // ----------------------------
-    for (int i = 0; i < processCount; i++) {
-
-        MPI_Send(&vecNumbers, chunksize, MPI_DOUBLE, i + 1, 0, MPI_COMM_WORLD);
-    }
+    std::cout << "rank: " << processRank << "proc: " << numbersCount << "\n";
+    MPI_Finalize();
+    exit(0);
 
     // Step 3 - Reduction Tree
     // ----------------------------
@@ -133,8 +145,8 @@ int main(int argc, char **argv) {
         Result result;
         result.sum = totalSum;
         result.processTime = 7;
-        for (int i = 0; i < vecNumbers.size(); i++) {
-            std::cout << "Number " << (i + 1) << ": " << vecNumbers[i] << "\n";
+        for (int i = 0; i < numbersCount; i++) {
+            std::cout << "Number " << (i + 1) << ": " << numbersArray[i] << "\n";
         }
         // Result result = startParallelProcess(vecRelations);
         printResult(outputType, result);
@@ -179,11 +191,10 @@ int readNumbersCount() {
     return numberCount;
 }
 
-std::vector<float> readVecNumbers(const int numberCount) {
+void readNumbersArray(float* numbersArray, const int numbersCount) {
     int badAttempts = 0;
-    float number = 0.0;
-    std::vector<float> vecNumbers;
-    for (long i = 0; i < numberCount; i++) {
+    double number = 0.0;
+    for (long i = 0; i < numbersCount; i++) {
         std::cin >> number;
         while (std::cin.bad() || std::cin.fail()) {
             allowAnotherAttempt("Error: The number must be a integer or a float [5 | 5.0].", badAttempts);
@@ -191,9 +202,8 @@ std::vector<float> readVecNumbers(const int numberCount) {
             std::cin.ignore(INT_MAX, '\n');
             std::cin >> number;
         }
-        vecNumbers.push_back(number);
+        numbersArray[i] = number;
     }
-    return vecNumbers;
 }
 
 void allowAnotherAttempt(const std::string msg, int &badAttempts) {
