@@ -11,7 +11,7 @@
 #include <iostream>     // for std::cin, std::cout, etc.
 #include <limits.h>     // for INT_MAX
 #include <vector>       // for vector
-#include <cmath>        // for std::pow
+#include <cmath>        // for std::pow, std::ceil
 #include <iomanip>      // for std::setprecision
 #include <stdlib.h>     // for std:atoi
 #include <mpi.h>        // for MPI
@@ -47,65 +47,120 @@ void printUsage();
 OutputType stringToOutputType(std::string);
 void printResult(OutputType, Result);
 void allowAnotherAttempt(const std::string, int&);
-bool isPowerOfTwo(uint number);
 
 // -----------------------------------------------------
 // main Function
 // -----------------------------------------------------
 int main(int argc, char **argv) {
-    int processCount;
-    int processRank;
-    int numberToSend;
-    int currentLevel,
-    int auxLevel;
-    int NextLevel;
-    int processSource;
-    int processSourceTag;
-    int processTarget;
-    int processTargetTag;
-    float levelsCount;
-    static int totalSum = 0;
-    MPI_Status status;
-    readInputParams(argc, argv);
-    OutputType outputType = readOutputType();
-    int numbersCount = readNumbersCount();
-    std::vector<float> vecNumbers = readVecNumbers(numbersCount);
 
+    // Input variables
+    // ----------------------------
+    OutputType outputType = NONE;
+    int numbersCount = 0;
+    std::vector<float> vecNumbers;
+
+    // MPI variables
+    // ----------------------------
+    int processRank;
+    int processCount;
+    int currentLevel;
+    int processSource;
+    int processTarget;
+    int processSourceTag = 0;
+    int processTargetTag = 0;
+    int level;
+    int nextLevel;
+    double levelsCount = 0;
+    double chunksize = 0;
+    double processedNumber;
+    static double totalSum = 0;
+    MPI_Status status;
+
+    // MPI initialization
+    // ----------------------------
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &processCount);
     MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
 
-    if (isPowerOfTwo(processCount)) {
+    levelsCount = log2(processCount);
+
+    if (processRank == PROCESS_MASTER) {
+        //
+        // temp begin
+        //
+        std::cout << "Number of process: " << processCount << "\n";
+        std::cout << "Number of levels: " << levelsCount << "\n";
+        //
+        // temp end
+        //
+
+        // Reading input data
+        // ----------------------------
+        readInputParams(argc, argv);
+        outputType = readOutputType();
+        numbersCount = readNumbersCount();
+        vecNumbers = readVecNumbers(numbersCount);
+
+        // Step 1 - Element Distribution
+        // ----------------------------
+        chunksize = std::ceil(vecNumbers.size() / processCount);
+        //
+        // temp begin
+        //
+        std::cout << "Chunksize: " << chunksize << "\n";
+        //
+        // temp end
+        //
+    }
+
+    if (processRank == PROCESS_MASTER) {
+
+    } else {
 
     }
 
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    // ~~~~~~~~~~~~~~~
-    Result result;
-    result.sum = 0.0;
-    result.processTime = 0;
-    for (int i = 0; i < vecNumbers.size(); i++) {
-        std::cout << "Number " << (i + 1) << ": " << vecNumbers[i] << "\n";
-        result.sum += vecNumbers[i];
+    // Getting the tree height
+    // ----------------------------
+    levelsCount = log2(processCount);
+
+    // Stating MPI data process
+    // ----------------------------
+    totalSum = processRank + 1.0;
+    for (currentLevel = 0; currentLevel < levelsCount; currentLevel++) {
+        level = (int) (std::pow(2, currentLevel));
+        if ((processRank % level) == 0) {
+            nextLevel = (int) (pow(2, (currentLevel + 1)));
+            if ((processRank % nextLevel) == 0) {
+                processSource = processRank + level;
+                MPI_Recv(&processedNumber, 1, MPI_DOUBLE, processSource, processSourceTag, MPI_COMM_WORLD, &status);
+                totalSum += processedNumber;
+            } else {
+                processTarget = processRank - level;
+                MPI_Send(&totalSum, 1, MPI_DOUBLE, processTarget, processTargetTag, MPI_COMM_WORLD);
+            }
+        }
     }
-    // ~~~~~~~~~~~~~~~
-    // Result result = startParallelProcess(vecRelations);
-    printResult(outputType, result);
+    // Printing the result
+    // ----------------------------
+    if (processRank == PROCESS_MASTER) {
+        Result result;
+        result.sum = totalSum;
+        result.processTime = 7;
+        for (int i = 0; i < vecNumbers.size(); i++) {
+            std::cout << "Number " << (i + 1) << ": " << vecNumbers[i] << "\n";
+        }
+        // Result result = startParallelProcess(vecRelations);
+        printResult(outputType, result);
+    }
+    // MPI finalization
+    // ----------------------------
+    MPI_Finalize();
     return EXIT_SUCCESS;
 }
 
 // Function implementations
 // -----------------------------------------------------
 void readInputParams(int argc, char **argv) {
-    std::cout << "proc number: " << argv[0] << "\n\n";
     if (argc != 1) {
         printUsage();
         exit (EXIT_FAILURE);
@@ -161,10 +216,6 @@ void allowAnotherAttempt(const std::string msg, int &badAttempts) {
         printUsage();
         exit (EXIT_FAILURE);
     }
-}
-
-bool isPowerOfTwo(uint number) {
-    return (number & -number) == number;
 }
 
 void printUsage() {
