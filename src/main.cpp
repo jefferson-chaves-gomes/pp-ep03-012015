@@ -121,7 +121,6 @@ int main(int argc, char **argv) {
         for (int i = 1; i < processCount; i++) {
             MPI_Send(&blockSizesArray[i], 1, MPI_INT, i, 1, MPI_COMM_WORLD);
         }
-
         blockSize = blockSizesArray[processRank];
         std::cout << "rank: " << processRank << " -> ";
         for (int i = 0; i < partitionedNumbersVector.size(); i++) {
@@ -132,15 +131,11 @@ int main(int argc, char **argv) {
     } else {
         // Step 1 - Element Distribution - RECEIVING
         // ----------------------------
-
         MPI_Recv(&blockSize, 1, MPI_INT, 0, 1, MPI_COMM_WORLD, &status);
         for (int i = 0; i < blockSize; i++) {
             MPI_Recv(&receivedNumber, 1, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &status);
             partitionedNumbersVector.push_back(receivedNumber);
         }
-//        MPI_Recv(&chunksize, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
-//        receivedNumbersArray = new float[chunksize];
-//        MPI_Recv(receivedNumbersArray, chunksize, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &status);
         //
         // temp begin
         //
@@ -149,11 +144,6 @@ int main(int argc, char **argv) {
             std::cout << " | " << partitionedNumbersVector[i];
         }
         std::cout << "\n";
-//        std::cout << "rank: " << processRank << " -> ";
-//        for (int i = 0; i < chunksize; i++) {
-//            std::cout << receivedNumbersArray[i] << " | ";
-//        }
-//        std::cout << "\n";
         //
         // temp end
         //
