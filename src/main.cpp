@@ -327,21 +327,19 @@ void startReductionTree(double &partialSum) {
     double receivedNumber;
     double totalSum = partialSum;
     levelsCount = log2(processCount);
-    std::cout << "rank: " << processRank << " levelsCount: " << levelsCount << BREAK_LINE;
     for (currentLevel = 0; currentLevel < levelsCount; currentLevel++) {
         level = (int) (std::pow(2, currentLevel));
         if ((processRank % level) == 0) {
             nextLevel = (int) (pow(2, (currentLevel + 1)));
             if ((processRank % nextLevel) == 0) {
                 processSource = processRank + level;
-                std::cout << "rank: " << processRank << " RECEIVING from " << processSource << BREAK_LINE;
-                usleep(1000000);
+                if (processSource > processCount - 1) {
+                    continue;
+                }
                 MPI_Recv(&receivedNumber, 1, MPI_DOUBLE, processSource, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 totalSum += receivedNumber;
             } else {
                 processTarget = processRank - level;
-                std::cout << "rank: " << processRank << " SENDING to " << processTarget << BREAK_LINE;
-                usleep(1000000);
                 MPI_Send(&totalSum, 1, MPI_DOUBLE, processTarget, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD);
             }
         }
