@@ -19,8 +19,6 @@
 #include <stdlib.h>     // for std:atoi
 #include <mpi.h>        // for MPI
 
-#include <unistd.h>
-
 // Constants definitions
 // -----------------------------------------------------
 #define BREAK_LINE "\n"
