@@ -1,0 +1,43 @@
+rank: 0 levelsCount: 2
+rank: 1 levelsCount: 2
+rank: 2 levelsCount: 2
+rank: 3 levelsCount: 2
+
+rank: 1 SENDING to '0
+rank: 3 SENDING to '2
+rank: 2 SENDING to '0
+
+rank: 2 RECEIVING from '3
+rank: 0 RECEIVING from '1
+rank: 0 RECEIVING from '2
+
+time rank 0: 2005
+time rank 1: 1001
+time rank 2: 2005
+time rank 3: 1001
+
+550.40
+2005
+
+
+
+rank: 0 levelsCount: 2.32193
+rank: 1 levelsCount: 2.32193
+rank: 2 levelsCount: 2.32193
+rank: 3 levelsCount: 2.32193
+rank: 4 levelsCount: 2.32193
+
+rank: 1 SENDING to '0
+rank: 3 SENDING to '2
+
+rank: 0 RECEIVING from '1
+rank: 4 RECEIVING from '5
+rank: 2 RECEIVING from '3
+rank: 0 RECEIVING from '2
+
+[iMac-de-Jefferson:62861] *** An error occurred in MPI_Recv
+[iMac-de-Jefferson:62861] *** reported by process [3576889345,4]
+[iMac-de-Jefferson:62861] *** on communicator MPI_COMM_WORLD
+[iMac-de-Jefferson:62861] *** MPI_ERR_RANK: invalid rank
+[iMac-de-Jefferson:62861] *** MPI_ERRORS_ARE_FATAL (processes in this communicator will now abort,
+[iMac-de-Jefferson:62861] ***    and potentially your MPI job) 

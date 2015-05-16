@@ -19,6 +19,8 @@
 #include <stdlib.h>     // for std:atoi
 #include <mpi.h>        // for MPI
 
+#include <unistd.h>
+
 // Constants definitions
 // -----------------------------------------------------
 #define BREAK_LINE "\n"
@@ -49,9 +51,9 @@ struct Result {
 void readInputParams(int, char**);
 int readNumbersCount();
 OutputType readOutputType();
+OutputType stringToOutputType(std::string);
 void readNumbersArray(float*, const int);
 void printUsage();
-OutputType stringToOutputType(std::string);
 void printResult(OutputType);
 void allowAnotherAttempt(const std::string, int&);
 void startSerialProcess(const float*, const int);
@@ -79,9 +81,6 @@ int main(int argc, char **argv) {
     int numbersCount = 0;
     float *numbersArray = NULL;
 
-    // Parallel time eval variables
-    double startTime, endTime;
-
     // MPI initialization
     // ----------------------------
     MPI_Init(&argc, &argv);
@@ -100,26 +99,33 @@ int main(int argc, char **argv) {
 
     // Checks if data processing will be serial
     // ----------------------------
-    if (processCount == 1) {
-        startSerialProcess(numbersArray, numbersCount);
-        printResult(outputType);
-        MPI_Finalize();
-        return EXIT_SUCCESS;
-    }
+//    if (processCount == 1) {
+//        startSerialProcess(numbersArray, numbersCount);
+//        printResult(outputType);
+//        MPI_Finalize();
+//        return EXIT_SUCCESS;
+//    }
 
+    // Start parallel process
+    // ----------------------------
+    double startTime, endTime;
     startTime = MPI_Wtime();
     startParallelProcess(numbersCount, numbersArray);
     endTime = MPI_Wtime();
-    // Printing the result
-    // ----------------------------
-    if (processRank == PROCESS_MASTER) {
-        result.processTime = endTime - startTime;
-        printResult(outputType);
-    }
-    delete[] numbersArray;
+
     // MPI finalization
     // ----------------------------
     MPI_Finalize();
+
+    // Printing the result
+    // ----------------------------
+    result.processTime = (endTime - startTime) * 1000;
+    std::cout << "time rank " << processRank << ": " << result.processTime << BREAK_LINE;
+    if (processRank == PROCESS_MASTER) {
+        printResult(outputType);
+    }
+    delete[] numbersArray;
+
     return EXIT_SUCCESS;
 }
 
@@ -207,7 +213,6 @@ OutputType stringToOutputType(std::string input) {
 }
 
 void printResult(OutputType outputType) {
-    std::cout << std::endl;
     switch (outputType) {
         case TIME:
             std::cout << result.processTime << BREAK_LINE;
@@ -234,7 +239,7 @@ void startSerialProcess(const float *numbersArray, const int numbersCount) {
         totalSum += numbersArray[i];
     }
     gettimeofday(&endTime, NULL);
-    long time = ((endTime.tv_sec * 1000000 + endTime.tv_usec) - (startTime.tv_sec * 1000000 + startTime.tv_usec)) / 1000;
+    long time = ((endTime.tv_sec * 1000 + endTime.tv_usec) - (startTime.tv_sec * 1000 + startTime.tv_usec));
     result.sum = totalSum;
     result.processTime = time;
 }
@@ -322,16 +327,21 @@ void startReductionTree(double &partialSum) {
     double receivedNumber;
     double totalSum = partialSum;
     levelsCount = log2(processCount);
+    std::cout << "rank: " << processRank << " levelsCount: " << levelsCount << BREAK_LINE;
     for (currentLevel = 0; currentLevel < levelsCount; currentLevel++) {
         level = (int) (std::pow(2, currentLevel));
         if ((processRank % level) == 0) {
             nextLevel = (int) (pow(2, (currentLevel + 1)));
             if ((processRank % nextLevel) == 0) {
                 processSource = processRank + level;
+                std::cout << "rank: " << processRank << " RECEIVING from " << processSource << BREAK_LINE;
+                usleep(1000000);
                 MPI_Recv(&receivedNumber, 1, MPI_DOUBLE, processSource, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 totalSum += receivedNumber;
             } else {
                 processTarget = processRank - level;
+                std::cout << "rank: " << processRank << " SENDING to " << processTarget << BREAK_LINE;
+                usleep(1000000);
                 MPI_Send(&totalSum, 1, MPI_DOUBLE, processTarget, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD);
             }
         }
