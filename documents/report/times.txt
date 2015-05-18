@@ -1,0 +1,326 @@
+
+ ########################### Start process for 1 Thread(s) ########################### 
+
+
+exemplo-00.txt - 5 vertices
+
+64.00
+78
+
+
+exemplo-01.txt - 2251 vertices
+
+21999.00
+139
+
+
+exemplo-02.txt - 25748 vertices
+
+1725880.50
+634
+
+
+exemplo-03.txt - 11954 vertices
+
+7668714.50
+347
+
+
+exemplo-04.txt - 310398 vertices
+
+328170058.95
+6715
+
+
+in-01.txt 	 - 10000003 vertices
+
+16495624.27
+209889
+
+
+in-02.txt 	 - 30000003 vertices
+
+2039436.39
+665619
+
+
+in-03.txt 	- 50000003 vertices
+
+7398337.15
+1078628
+
+
+in-04.txt 	- 70000003 vertices
+
+1749621.16
+1619591
+
+
+
+ ########################### Start process for 2 Thread(s) ########################### 
+ 
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/exemplo-00.txt 
+64.00
+115
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/exemplo-01.txt 
+21999.00
+146
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/exemplo-02.txt 
+1725880.50
+440
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/exemplo-03.txt 
+7668714.50
+307
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/exemplo-04.txt 
+328170058.95
+3577
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/in-01.txt 
+16495624.27
+119923
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/in-02.txt 
+2039436.39
+340865
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/in-03.txt 
+7398337.15
+579789
+
+iMac-de-Jefferson:Debug jgomes$ ./pp-ep02-012015 all 2 < ../documents/input-files/in-04.txt 
+1749621.16
+827808
+
+
+
+ ########################### Start process for 4 Thread(s) ########################### 
+
+
+exemplo-00.txt - 5 vertices
+
+64.00
+115
+
+
+exemplo-01.txt - 2251 vertices
+
+21999.00
+165
+
+
+exemplo-02.txt - 25748 vertices
+
+1725880.50
+307
+
+
+exemplo-03.txt - 11954 vertices
+
+7668714.50
+238
+
+
+exemplo-04.txt - 310398 vertices
+
+328170058.95
+2400
+
+
+in-01.txt 	 - 10000003 vertices
+
+16495624.27
+69392
+
+
+in-02.txt 	 - 30000003 vertices
+
+2039436.39
+207288
+
+
+in-03.txt 	- 50000003 vertices
+
+7398337.15
+332668
+
+
+in-04.txt 	- 70000003 vertices
+
+1749621.16
+473638
+
+ ########################### Start process for 6 Thread(s) ########################### 
+
+
+exemplo-00.txt - 5 vertices
+
+64.00
+176
+
+
+exemplo-01.txt - 2251 vertices
+
+21999.00
+186
+
+
+exemplo-02.txt - 25748 vertices
+
+1725880.50
+411
+
+
+exemplo-03.txt - 11954 vertices
+
+7668714.50
+256
+
+
+exemplo-04.txt - 310398 vertices
+
+328170058.95
+2755
+
+
+in-01.txt 	 - 10000003 vertices
+
+16495624.27
+74143
+
+
+in-02.txt 	 - 30000003 vertices
+
+2039436.39
+204157
+
+
+in-03.txt 	- 50000003 vertices
+
+7398337.15
+404018
+
+
+in-04.txt 	- 70000003 vertices
+
+1749621.16
+480052
+
+ ########################### Start process for 8 Thread(s) ########################### 
+
+
+exemplo-00.txt - 5 vertices
+
+64.00
+175
+
+
+exemplo-01.txt - 2251 vertices
+
+21999.00
+217
+
+
+exemplo-02.txt - 25748 vertices
+
+1725880.50
+387
+
+
+exemplo-03.txt - 11954 vertices
+
+7668714.50
+249
+
+
+exemplo-04.txt - 310398 vertices
+
+328170058.95
+2272
+
+
+in-01.txt 	 - 10000003 vertices
+
+16495624.27
+70859
+
+
+in-02.txt 	 - 30000003 vertices
+
+2039436.39
+200518
+
+
+in-03.txt 	- 50000003 vertices
+
+7398337.15
+338051
+
+
+in-04.txt 	- 70000003 vertices
+
+1749621.16
+475789
+
+ ########################### Start process for 10 Thread(s) ########################### 
+
+
+exemplo-00.txt - 5 vertices
+
+64.00
+164
+
+
+exemplo-01.txt - 2251 vertices
+
+21999.00
+243
+
+
+exemplo-02.txt - 25748 vertices
+
+1725880.50
+485
+
+
+exemplo-03.txt - 11954 vertices
+
+7668714.50
+304
+
+
+exemplo-04.txt - 310398 vertices
+
+328170058.95
+2624
+
+
+in-01.txt 	 - 10000003 vertices
+
+16495624.27
+69914
+
+
+in-02.txt 	 - 30000003 vertices
+
+2039436.39
+206987
+
+
+in-03.txt 	- 50000003 vertices
+
+7398337.15
+349063
+
+
+in-04.txt 	- 70000003 vertices
+
+1749621.16
+471808
+
+
+IT IS END... 
