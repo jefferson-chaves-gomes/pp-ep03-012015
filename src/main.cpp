@@ -14,9 +14,8 @@
 #include <limits.h>     // for INT_MAX
 #include <sys/time.h>   // for gettimeofday
 #include <vector>       // for vector
-#include <cmath>        // for std::pow, std::ceil
+#include <cmath>        // for std::pow
 #include <iomanip>      // for std::setprecision
-#include <stdlib.h>     // for std:atoi
 #include <mpi.h>        // for MPI
 
 // Constants definitions
@@ -27,6 +26,7 @@
 #define PROCESS_MASTER 0
 #define GLOBAL_LISTEN_TAG 0
 #define BLOCKS_LISTEN_TAG 1
+#define MPI_WTIME_IS_GLOBAL 1
 
 // Enums definitions
 // -----------------------------------------------------
@@ -46,7 +46,7 @@ struct Result {
 
 // Functions declarations
 // -----------------------------------------------------
-void readInputParams(int, char**);
+void checkInputParams(int, char**);
 int readNumbersCount();
 OutputType readOutputType();
 OutputType stringToOutputType(std::string);
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
     // Read input data
     // ----------------------------
     if (processRank == PROCESS_MASTER) {
-        readInputParams(argc, argv);
+        checkInputParams(argc, argv);
         outputType = readOutputType();
         numbersCount = readNumbersCount();
         numbersArray = new float[numbersCount];
@@ -97,42 +97,47 @@ int main(int argc, char **argv) {
 
     // Checks if data processing will be serial
     // ----------------------------
-//    if (processCount == 1) {
-//        startSerialProcess(numbersArray, numbersCount);
-//        printResult(outputType);
-//        MPI_Finalize();
-//        return EXIT_SUCCESS;
-//    }
+    if (processCount == 1) {
+        startSerialProcess(numbersArray, numbersCount);
+        printResult(outputType);
+        MPI_Finalize();
+        return EXIT_SUCCESS;
+    }
 
     // Start parallel process
     // ----------------------------
-    double startTime, endTime;
-    startTime = MPI_Wtime();
     startParallelProcess(numbersCount, numbersArray);
-    endTime = MPI_Wtime();
 
-    // MPI finalization
-    // ----------------------------
-    MPI_Finalize();
 
     // Printing the result
     // ----------------------------
-    result.processTime = (endTime - startTime) * 1000;
-    std::cout << "time rank " << processRank << ": " << result.processTime << BREAK_LINE;
+    if (processRank != PROCESS_MASTER) {
+        MPI_Send(&result.processTime, 1, MPI_LONG, 0, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD);
+    }
     if (processRank == PROCESS_MASTER) {
+        long time;
+        for (int i = 1; i < processCount; ++i) {
+            MPI_Recv(&time, 1, MPI_LONG, i, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            if(result.processTime < time) {
+                result.processTime = time;
+            }
+        }
         printResult(outputType);
     }
     delete[] numbersArray;
 
+    // MPI finalization
+    // ----------------------------
+    MPI_Finalize();
     return EXIT_SUCCESS;
 }
 
 // Function implementations
 // -----------------------------------------------------
-void readInputParams(int argc, char **argv) {
+void checkInputParams(int argc, char **argv) {
     if (argc != 1) {
         printUsage();
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -153,7 +158,7 @@ int readNumbersCount() {
     int numberCount;
     std::cin >> numberCount;
     while (std::cin.bad() || std::cin.fail() || numberCount < 2) {
-        allowAnotherAttempt("Error: The amont of numbers must be a valid integer greater then 1.", badAttempts);
+        allowAnotherAttempt("Error: The amount of numbers must be a valid integer greater then 1.", badAttempts);
         std::cin.clear();
         std::cin.ignore(INT_MAX, '\n');
         std::cin >> numberCount;
@@ -179,7 +184,7 @@ void readNumbersArray(float* numbersArray, const int numbersCount) {
 void allowAnotherAttempt(const std::string msg, int &badAttempts) {
     if (++badAttempts >= MAX_ATTEMPTS) {
         printUsage();
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
     std::cout << msg << BREAK_LINE;
     std::cout << "Try again (you can try more " << MAX_ATTEMPTS - badAttempts << " times)." << BREAK_LINE;
@@ -190,7 +195,7 @@ void printUsage() {
     std::cout << "Usage:" << BREAK_LINE;
     std::cout << TAB << "mpirun [-n <number of process>] pp-ep03-012015" << BREAK_LINE << BREAK_LINE;
     std::cout << TAB << "output type         -- after run, inform the output type [sum | time | all]" << BREAK_LINE;
-    std::cout << TAB << "number of threads   -- and after, inform the amount of numbers to be added" << BREAK_LINE << BREAK_LINE;
+    std::cout << TAB << "amount of numbers   -- and after, inform the amount of numbers to be added" << BREAK_LINE << BREAK_LINE;
     std::cout << "Sample:" << BREAK_LINE;
     std::cout << TAB << "mpirun -n 4 pp-ep03-012015" << BREAK_LINE;
     std::cout << TAB << "all" << BREAK_LINE;
@@ -244,6 +249,7 @@ void startSerialProcess(const float *numbersArray, const int numbersCount) {
 
 void startParallelProcess(const int numbersCount, const float *numbersArray) {
     static double partialSum = 0;
+
     // STEP 1 - Elements Distribution
     // ----------------------------
     if (processRank == PROCESS_MASTER) {
@@ -257,6 +263,9 @@ void startParallelProcess(const int numbersCount, const float *numbersArray) {
         startReceivingElements();
     }
 
+    double startTime, endTime;
+    startTime = MPI_Wtime();
+
     // STEP 2 - Reduction Tree Simulation
     // ----------------------------
     startReductionTreeSimulation(partialSum);
@@ -264,6 +273,9 @@ void startParallelProcess(const int numbersCount, const float *numbersArray) {
     // STEP 3 - Reduction Tree
     // ----------------------------
     startReductionTree(partialSum);
+
+    endTime = MPI_Wtime();
+    result.processTime = (endTime - startTime) * 1000;
 }
 
 void startDispatchElements(const int numbersCount, const float *numbersArray) {

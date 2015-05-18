@@ -86,3 +86,77 @@ rank: 0 RECEIVING from 2
 rank: 0 RECEIVING from 4
 
 
+rank 0 levelsCount = 3
+rank 1 levelsCount = 3
+rank 2 levelsCount = 3
+rank 3 levelsCount = 3
+rank 4 levelsCount = 3
+rank 5 levelsCount = 3
+
+
+
+rank 0 level = 1                            [ ( 0 % 1 == 0 ) verifica o próximo nível ] 
+rank 0 nextLevel = 2                        [ ( 0 % 2 == 0 ) recebe operando do processo seguinte ]
+rank 0 receive from processSource = 1
+
+rank 1 level = 1                            [ ( 1 % 1 == 0 ) verifica o próximo nível ] 
+rank 1 nextLevel = 2                        [ ( 1 % 2 != 0 ) envia operando ao processo anterior ]
+rank 1 send to processTarget = 0
+rank 1 level = 2                            [ ( 1 % 2 != 0 ) faz nada ]
+rank 1 level = 4                            [ ( 1 % 4 != 0 ) faz nada ]
+
+rank 2 level = 1                            [ ( 2 % 1 == 0 ) verifica o próximo nível ]
+rank 2 nextLevel = 2                        [ ( 2 % 2 == 0 ) recebe operando do processo seguinte ]
+rank 2 receive from processSource = 3
+
+rank 3 level = 1                            [ ( 3 % 1 == 0 ) verifica o próximo nível ]
+rank 3 nextLevel = 2                        [ ( 3 % 2 != 0 ) envia operando ao processo anterior ]
+rank 3 send to processTarget = 2
+rank 3 level = 2                            [ ( 3 % 2 != 0 ) faz nada ]
+rank 3 level = 4                            [ ( 3 % 4 != 0 ) faz nada ]
+
+rank 4 level = 1                            [ ( 4 % 1 == 0 ) verifica o próximo nível ]
+rank 4 nextLevel = 2                        [ ( 4 % 2 == 0 ) recebe operando do processo seguinte ]
+rank 4 receive from processSource = 5
+
+rank 5 level = 1                            [ ( 5 % 1 == 0 ) verifica o próximo nível ]
+rank 5 nextLevel = 2                        [ ( 5 % 2 != 0 ) envia operando ao processo anterior ]
+rank 5 send to processTarget = 4
+rank 5 level = 2                            [ ( 5 % 2 != 0 ) faz nada ]
+rank 5 level = 4                            [ ( 5 % 4 != 0 ) faz nada ]
+
+
+rank 0 level = 2
+rank 0 nextLevel = 4
+rank 0 receive from processSource = 2
+
+rank 0 level = 4
+rank 0 nextLevel = 8
+rank 0 receive from processSource = 4
+
+
+
+rank 7 levelsCount = 3
+rank 7 level = 1
+rank 7 nextLevel = 2
+rank 7 send to processTarget = 6
+rank 7 level = 2
+rank 7 level = 4
+rank 6 levelsCount = 3
+rank 6 level = 1
+rank 6 nextLevel = 2
+rank 6 receive from processSource = 7
+rank 6 level = 2
+rank 6 nextLevel = 4
+rank 6 send to processTarget = 4
+rank 6 level = 4
+rank 4 level = 2
+rank 4 nextLevel = 4
+rank 4 receive from processSource = 6
+rank 4 level = 4
+rank 4 nextLevel = 8
+rank 4 send to processTarget = 0
+rank 2 level = 2
+rank 2 nextLevel = 4
+rank 2 send to processTarget = 0
+rank 2 level = 4
