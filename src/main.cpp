@@ -40,7 +40,7 @@ enum OutputType {
 // Structs definitions
 // -----------------------------------------------------
 struct Result {
-        long processTime;
+        double processTime;
         long double sum;
 };
 
@@ -52,14 +52,15 @@ OutputType readOutputType();
 OutputType stringToOutputType(std::string);
 void readNumbersArray(float*, const int);
 void printUsage();
+void checkProcessTime();
 void printResult(OutputType);
 void allowAnotherAttempt(const std::string, int&);
 void startSerialProcess(const float*, const int);
 void startParallelProcess(const int, const float*);
 void startDispatchElements(const int, const float*);
 void startReceivingElements();
-void startReductionTreeSimulation(double&);
-void startReductionTree(double&);
+void startReductionTreeSimulation(long double&);
+void startReductionTree(long double&);
 
 // Globals variable
 // -----------------------------------------------------
@@ -108,20 +109,13 @@ int main(int argc, char **argv) {
     // ----------------------------
     startParallelProcess(numbersCount, numbersArray);
 
+    // Check the process time
+    // ----------------------------
+    checkProcessTime();
 
     // Printing the result
     // ----------------------------
-    if (processRank != PROCESS_MASTER) {
-        MPI_Send(&result.processTime, 1, MPI_LONG, 0, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD);
-    }
     if (processRank == PROCESS_MASTER) {
-        long time;
-        for (int i = 1; i < processCount; ++i) {
-            MPI_Recv(&time, 1, MPI_LONG, i, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            if(result.processTime < time) {
-                result.processTime = time;
-            }
-        }
         printResult(outputType);
     }
     delete[] numbersArray;
@@ -137,7 +131,7 @@ int main(int argc, char **argv) {
 void checkInputParams(int argc, char **argv) {
     if (argc != 1) {
         printUsage();
-        exit(EXIT_FAILURE);
+        exit (EXIT_FAILURE);
     }
 }
 
@@ -184,7 +178,7 @@ void readNumbersArray(float* numbersArray, const int numbersCount) {
 void allowAnotherAttempt(const std::string msg, int &badAttempts) {
     if (++badAttempts >= MAX_ATTEMPTS) {
         printUsage();
-        exit(EXIT_FAILURE);
+        exit (EXIT_FAILURE);
     }
     std::cout << msg << BREAK_LINE;
     std::cout << "Try again (you can try more " << MAX_ATTEMPTS - badAttempts << " times)." << BREAK_LINE;
@@ -234,6 +228,21 @@ void printResult(OutputType outputType) {
     }
 }
 
+void checkProcessTime() {
+    if (processRank != PROCESS_MASTER) {
+        MPI_Send(&result.processTime, 1, MPI_DOUBLE, 0, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD);
+    }
+    if (processRank == PROCESS_MASTER) {
+        double time;
+        for (int i = 1; i < processCount; ++i) {
+            MPI_Recv(&time, 1, MPI_DOUBLE, i, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            if (result.processTime < time) {
+                result.processTime = time;
+            }
+        }
+    }
+}
+
 void startSerialProcess(const float *numbersArray, const int numbersCount) {
     double totalSum = 0;
     timeval startTime, endTime;
@@ -242,13 +251,13 @@ void startSerialProcess(const float *numbersArray, const int numbersCount) {
         totalSum += numbersArray[i];
     }
     gettimeofday(&endTime, NULL);
-    long time = ((endTime.tv_sec * 1000 + endTime.tv_usec) - (startTime.tv_sec * 1000 + startTime.tv_usec));
+    double time = ((endTime.tv_sec * 1000 + endTime.tv_usec) - (startTime.tv_sec * 1000 + startTime.tv_usec));
     result.sum = totalSum;
     result.processTime = time;
 }
 
 void startParallelProcess(const int numbersCount, const float *numbersArray) {
-    static double partialSum = 0;
+    long double partialSum = 0;
 
     // STEP 1 - Elements Distribution
     // ----------------------------
@@ -310,7 +319,7 @@ void startReceivingElements() {
     }
 }
 
-void startReductionTreeSimulation(double &partialSum) {
+void startReductionTreeSimulation(long double &partialSum) {
     partialSum = processPartNumbersVector[0];
     int numbersToSendCount = blockSize - 1;
     float receivedNumber;
@@ -330,12 +339,12 @@ void startReductionTreeSimulation(double &partialSum) {
     }
 }
 
-void startReductionTree(double &partialSum) {
+void startReductionTree(long double &partialSum) {
     int processSource, processTarget;
     int level, currentLevel, nextLevel;
     float levelsCount = 0;
-    double receivedNumber;
-    double totalSum = partialSum;
+    long double receivedNumber;
+    long double totalSum = partialSum;
     levelsCount = log2(processCount);
     for (currentLevel = 0; currentLevel < levelsCount; currentLevel++) {
         level = (int) (std::pow(2, currentLevel));
@@ -346,11 +355,11 @@ void startReductionTree(double &partialSum) {
                 if (processSource > processCount - 1) {
                     continue;
                 }
-                MPI_Recv(&receivedNumber, 1, MPI_DOUBLE, processSource, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(&receivedNumber, 1, MPI_LONG_DOUBLE, processSource, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 totalSum += receivedNumber;
             } else {
                 processTarget = processRank - level;
-                MPI_Send(&totalSum, 1, MPI_DOUBLE, processTarget, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD);
+                MPI_Send(&totalSum, 1, MPI_LONG_DOUBLE, processTarget, GLOBAL_LISTEN_TAG, MPI_COMM_WORLD);
             }
         }
     }

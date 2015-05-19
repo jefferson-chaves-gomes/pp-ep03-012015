@@ -1,0 +1,235 @@
+
+ ########################### Start for 1 Process ########################### 
+
+
+mpirun -n 1 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-01_2ˆ18_result=34359974972.24.txt
+34359974972.24
+760.00
+
+mpirun -n 1 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-02_2ˆ19_result=137439477760.00.txt
+137439477760.00
+1543.00
+
+mpirun -n 1 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-03_2ˆ20_result=549756338176.00.txt
+549756338176.00
+3658.00
+
+mpirun -n 1 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-04_3ˆ13_result=1270933711326.00.txt
+1270933711326.00
+5332.00
+
+mpirun -n 1 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-05_2ˆ21_result=2199024304128.00.txt
+2199024304128.00
+6130.00
+
+mpirun -n 1 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-06_2ˆ22_result=8796095119360.00.txt
+8796095119360.00
+11908.00
+
+
+ ################################## END ######################################## 
+
+
+
+
+ ########################### Start for 2 Process ########################### 
+
+
+mpirun -n 2 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-01_2ˆ18_result=34359974972.24.txt
+34359974972.24
+114.60
+
+mpirun -n 2 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-02_2ˆ19_result=137439477760.00.txt
+137439477760.00
+232.10
+
+mpirun -n 2 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-03_2ˆ20_result=549756338176.00.txt
+549756338176.00
+458.74
+
+mpirun -n 2 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-04_3ˆ13_result=1270933711326.00.txt
+1270933711326.00
+675.93
+
+mpirun -n 2 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-05_2ˆ21_result=2199024304128.00.txt
+2199024304128.00
+921.13
+
+mpirun -n 2 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-06_2ˆ22_result=8796095119360.00.txt
+8796095119360.00
+1791.31
+
+
+ ################################## END ######################################## 
+
+
+
+
+ ########################### Start for 4 Process ########################### 
+
+
+mpirun -n 4 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-01_2ˆ18_result=34359974972.24.txt
+34359974972.24
+68.32
+
+mpirun -n 4 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-02_2ˆ19_result=137439477760.00.txt
+137439477760.00
+142.40
+
+mpirun -n 4 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-03_2ˆ20_result=549756338176.00.txt
+549756338176.00
+275.20
+
+mpirun -n 4 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-04_3ˆ13_result=1270933711326.00.txt
+1270933711326.00
+452.76
+
+mpirun -n 4 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-05_2ˆ21_result=2199024304128.00.txt
+2199024304128.00
+604.71
+
+mpirun -n 4 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-06_2ˆ22_result=8796095119360.00.txt
+8796095119360.00
+1172.55
+
+
+ ################################## END ######################################## 
+
+
+
+
+ ########################### Start for 6 Process ########################### 
+
+
+mpirun -n 6 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-01_2ˆ18_result=34359974972.24.txt
+34359974972.24
+59.61
+
+mpirun -n 6 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-02_2ˆ19_result=137439477760.00.txt
+137439477760.00
+159.35
+
+mpirun -n 6 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-03_2ˆ20_result=549756338176.00.txt
+549756338176.00
+307.51
+
+mpirun -n 6 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-04_3ˆ13_result=1270933711326.00.txt
+1270933711326.00
+468.76
+
+mpirun -n 6 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-05_2ˆ21_result=2199024304128.00.txt
+2199024304128.00
+652.06
+
+mpirun -n 6 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-06_2ˆ22_result=8796095119360.00.txt
+8796095119360.00
+1165.42
+
+
+ ################################## END ######################################## 
+
+
+
+
+ ########################### Start for 8 Process ########################### 
+
+
+mpirun -n 8 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-01_2ˆ18_result=34359974972.24.txt
+34359974972.24
+83.19
+
+mpirun -n 8 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-02_2ˆ19_result=137439477760.00.txt
+137439477760.00
+151.21
+
+mpirun -n 8 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-03_2ˆ20_result=549756338176.00.txt
+549756338176.00
+264.10
+
+mpirun -n 8 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-04_3ˆ13_result=1270933711326.00.txt
+1270933711326.00
+507.81
+
+mpirun -n 8 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-05_2ˆ21_result=2199024304128.00.txt
+2199024304128.00
+502.89
+
+mpirun -n 8 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-06_2ˆ22_result=8796095119360.00.txt
+8796095119360.00
+1040.38
+
+
+ ################################## END ######################################## 
+
+
+
+
+ ########################### Start for 10 Process ########################### 
+
+
+mpirun -n 10 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-01_2ˆ18_result=34359974972.24.txt
+34359974972.24
+64.56
+
+mpirun -n 10 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-02_2ˆ19_result=137439477760.00.txt
+137439477760.00
+139.57
+
+mpirun -n 10 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-03_2ˆ20_result=549756338176.00.txt
+549756338176.00
+282.22
+
+mpirun -n 10 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-04_3ˆ13_result=1270933711326.00.txt
+1270933711326.00
+427.69
+
+mpirun -n 10 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-05_2ˆ21_result=2199024304128.00.txt
+2199024304128.00
+565.96
+
+mpirun -n 10 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-06_2ˆ22_result=8796095119360.00.txt
+8796095119360.00
+1115.12
+
+
+ ################################## END ######################################## 
+
+
+
+
+ ########################### Start for 16 Process ########################### 
+
+
+mpirun -n 16 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-01_2ˆ18_result=34359974972.24.txt
+34359974972.24
+73.60
+
+mpirun -n 16 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-02_2ˆ19_result=137439477760.00.txt
+137439477760.00
+133.62
+
+mpirun -n 16 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-03_2ˆ20_result=549756338176.00.txt
+549756338176.00
+266.12
+
+mpirun -n 16 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-04_3ˆ13_result=1270933711326.00.txt
+1270933711326.00
+412.89
+
+mpirun -n 16 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-05_2ˆ21_result=2199024304128.00.txt
+2199024304128.00
+522.94
+
+mpirun -n 16 ../../Debug/pp-ep03-012015 < ../input-files/intput-file-06_2ˆ22_result=8796095119360.00.txt
+8796095119360.00
+1056.91
+
+
+ ################################## END ######################################## 
+
+
+
+
+
+IT IS END... 
+
