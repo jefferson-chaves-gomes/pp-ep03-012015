@@ -340,3 +340,15 @@ void printResult(OutputType outputType, Result result) {
     }
 }
 
+void startSerialProcess(const float *numbersArray, const int numbersCount) {
+    double totalSum = 0;
+    timeval startTime, endTime;
+    gettimeofday(&startTime, NULL);
+    for (int i = 0; i < numbersCount; ++i) {
+        totalSum += numbersArray[i];
+    }
+    gettimeofday(&endTime, NULL);
+    double time = ((endTime.tv_sec * 1000.0 + endTime.tv_usec / 1000.0) - (startTime.tv_sec * 1000.0 + startTime.tv_usec / 1000.0));
+    result.sum = totalSum;
+    result.processTime = time;
+}

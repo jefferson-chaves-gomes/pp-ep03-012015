@@ -7,7 +7,8 @@ files=(../input-files/*.txt)
 # echo "Total files in array : ${#files[*]}"
 # total=${#files[*]}
 
-processArray=(1 2 4 6 8 10 16)
+# processArray=(1 2 4 6 8 10 16)
+processArray=(1)
 
 for i in "${processArray[@]}"
 do

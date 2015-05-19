@@ -55,7 +55,6 @@ void printUsage();
 void checkProcessTime();
 void printResult(OutputType);
 void allowAnotherAttempt(const std::string, int&);
-void startSerialProcess(const float*, const int);
 void startParallelProcess(const int, const float*);
 void startDispatchElements(const int, const float*);
 void startReceivingElements();
@@ -94,15 +93,6 @@ int main(int argc, char **argv) {
         numbersCount = readNumbersCount();
         numbersArray = new float[numbersCount];
         readNumbersArray(numbersArray, numbersCount);
-    }
-
-    // Checks if data processing will be serial
-    // ----------------------------
-    if (processCount == 1) {
-        startSerialProcess(numbersArray, numbersCount);
-        printResult(outputType);
-        MPI_Finalize();
-        return EXIT_SUCCESS;
     }
 
     // Start parallel process
@@ -241,19 +231,6 @@ void checkProcessTime() {
             }
         }
     }
-}
-
-void startSerialProcess(const float *numbersArray, const int numbersCount) {
-    double totalSum = 0;
-    timeval startTime, endTime;
-    gettimeofday(&startTime, NULL);
-    for (int i = 0; i < numbersCount; ++i) {
-        totalSum += numbersArray[i];
-    }
-    gettimeofday(&endTime, NULL);
-    double time = ((endTime.tv_sec * 1000 + endTime.tv_usec) - (startTime.tv_sec * 1000 + startTime.tv_usec));
-    result.sum = totalSum;
-    result.processTime = time;
 }
 
 void startParallelProcess(const int numbersCount, const float *numbersArray) {
